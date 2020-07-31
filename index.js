@@ -21,14 +21,14 @@ app.use('/graphql', graphqlHTTP({
     `),
     rootValue: {
         events: () => {
-            return ['elem1','elem2']
+            return ['tracking','hacking']
         },
         createEvent: (args) => {
-            const eventName = args.Name;
+            const eventName = args.name;
             return eventName;
         }
     },
-    graphql: true
+    graphiql: true
 }))
 // app.get('/', function(req,res){
 //     res.send('Hello world');
