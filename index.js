@@ -5,14 +5,28 @@ const { graphqlHTTP } = require('express-graphql');
 //const graphqlHttp = graphqlHttp1()
 const { buildSchema } = require('graphql')
 const app = express()
+const events = []
 app.use(body.json())
 app.use('/graphql', graphqlHTTP({
     schema : buildSchema(`
+    type event{
+        _id: ID!
+        title: String!
+        description: String!
+        price: Float!
+        date: String!
+    }
+    input EventInput {
+        title: String!
+        description: String!
+        price: Float!
+        date: String!
+    }
         type RootQuery{
-            events: [String!]!
+            events: [event!]!
         }
         type RootMutation{
-            createEvent(name: String):String
+            createEvent(eventInput: EventInput ) : event
         }
         schema{
             query: RootQuery
@@ -21,11 +35,18 @@ app.use('/graphql', graphqlHTTP({
     `),
     rootValue: {
         events: () => {
-            return ['tracking','hacking']
+            return events
         },
         createEvent: (args) => {
-            const eventName = args.name;
-            return eventName;
+            const event = {
+                _id: Math.random().toString(),
+                title: args.eventInput.title,
+                description: args.eventInput.description,
+                price: +args.eventInput.price,
+                date: args.eventInput.date
+            };
+            events.push(event)
+            return event
         }
     },
     graphiql: true
